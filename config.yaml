@@ -1,0 +1,3 @@
+#Test
+test:
+  test: "Config.yaml loaded successfully"
