@@ -1,2 +1,3 @@
 pyyaml
-pathlib
+matplotlib
+numpy

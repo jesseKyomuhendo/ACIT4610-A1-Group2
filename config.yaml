@@ -1,3 +1,31 @@
-#Test
+# Test
 test:
   test: "Config.yaml loaded successfully"
+
+# Dataset settings — used by decoder.py to find and load the JSPLib
+# benchmark instance files, grouped by problem size category.
+dataset:
+  data_dir: "data"
+  categories:
+    small:
+      - "la01.txt"
+      - "la03.txt"
+    medium:
+      - "la16.txt"
+      - "la18.txt"
+    large:
+      - "la31.txt"
+      - "la33.txt"
+
+# Decoder settings — which Schedule Building Algorithm strategy the
+# decode() function uses to turn a chromosome into a feasible schedule.
+decoder:
+  strategy: "semi_active"
+
+# Output settings — where generated files (Gantt charts, example schedule
+# output) get saved, and what image format to use.
+results:
+  results_dir: "results"
+  image_format: "png"
+  example_gantt_filename: "example_gantt.png"
+  example_instance_gantt_filename: "example_la01_gantt.png"

@@ -14,5 +14,26 @@ with open(config_path, "r") as f:
 test = config["test"]["test"]
 print(test)
 
+# --- Dataset settings -----------------------------------------------------
+# Folder where the JSPLib instance files (la01.txt, la03.txt, ...) live.
+DATA_DIR = config["dataset"]["data_dir"]
 
-#Retrive other configurations
+# Which instance files belong to which problem-size category, e.g.
+# {"small": ["la01.txt", "la03.txt"], "medium": [...], "large": [...]}
+INSTANCE_CATEGORIES = config["dataset"]["categories"]
+
+# --- Decoder settings -------------------------------------------------------
+# Which Schedule Building Algorithm strategy decode() uses
+# (e.g. "semi_active" or "active").
+DECODER_STRATEGY = config["decoder"]["strategy"]
+
+# --- Results/output settings ------------------------------------------------
+# Folder where generated files (Gantt charts, CSVs, plots) get saved.
+RESULTS_DIR = config["results"]["results_dir"]
+
+# File extension used when saving images (e.g. "png", "jpg").
+IMAGE_FORMAT = config["results"]["image_format"]
+
+# Filenames for the example Gantt charts produced by decoder.py's demo.
+EXAMPLE_GANTT_FILENAME = config["results"]["example_gantt_filename"]
+EXAMPLE_INSTANCE_GANTT_FILENAME = config["results"]["example_instance_gantt_filename"]
