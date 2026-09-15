@@ -12,16 +12,20 @@
 #
 # Example: [0, 1, 0, 1] means: job 0 op 1, job 1 op 1, job 0 op 2, job 1 op 2.
 #
-# Assumed instance format: instance[j] is the list of operations of job j,
-# so len(instance[j]) is the number of operations job j has. Only
+# Assumed instance format: instance is the dictionary produced by decoder.py's
+# parse_instance(), e.g.:
+#   {"num_jobs": 10, "num_machines": 5, "jobs": {0: [(machine, time), ...], ...}}
+# so instance["jobs"][j] is the list of operations of job j, and
+# len(instance["jobs"][j]) is the number of operations job j has. Only
 # create_chromosome looks inside the instance.
 #
 # ---------------------------------------------------------------------------
 # FITNESS FUNCTION (OBJECTIVE)
 # ---------------------------------------------------------------------------
-# The fitness of a chromosome is its MAKESPAN: the number returned by
-# decode_function(chromosome, instance), i.e. the time at which the last
-# operation of the decoded schedule finishes.
+# The fitness of a chromosome is its MAKESPAN. decode_function(chromosome,
+# instance) is expected to match decoder.py's decode(): it returns a TUPLE
+# (schedule, makespan), not a single number, so run_ga always unpacks it and
+# uses only the makespan (the second value) as the fitness.
 #
 # LOWER IS BETTER. A shorter makespan means the whole schedule finishes sooner.
 #
@@ -33,16 +37,14 @@
 
 import random
 
-
-# Number of chromosomes that compete in each tournament inside run_ga.
-TOURNAMENT_SIZE = 3
+from util.LoadConfig import TOURNAMENT_SIZE
 
 
 # Builds one random valid chromosome where each job number appears once per operation of that job.
 def create_chromosome(instance):
     chromosome = []
-    for job in range(len(instance)):
-        number_of_operations = len(instance[job])
+    for job in instance["jobs"]:
+        number_of_operations = len(instance["jobs"][job])
         for operation in range(number_of_operations):
             chromosome.append(job)
     random.shuffle(chromosome)
@@ -180,29 +182,33 @@ def mutate(chromosome):
 
 # Runs the GA (minimizing makespan) and returns the best solution plus per-generation statistics.
 #
-# Fitness = makespan returned by decode_function; lower is better, so this
-# loop MINIMIZES. Tournament selection picks the lowest makespan in each group.
+# decode_function(chromosome, instance) must return a TUPLE (schedule, makespan)
+# -- exactly what decoder.py's decode() returns. run_ga always unpacks it and
+# uses only the makespan as the fitness; lower is better, so this loop
+# MINIMIZES. Tournament selection picks the lowest makespan in each group.
 #
 # Generations are numbered from 0 (generation 0 is the starting population),
-# so best_history[g] belongs to generation g.
+# so best_per_generation[g] belongs to generation g.
 def run_ga(instance, decode_function, population_size, num_generations,
            crossover_rate, mutation_rate, patience):
     population = create_population(instance, population_size)
 
     best_chromosome = None
     best_fitness = None
-    best_generation = 0
+    convergence_generation = 0
     generations_without_improvement = 0
 
-    best_history = []
-    worst_history = []
-    average_history = []
+    best_per_generation = []
+    worst_per_generation = []
+    average_per_generation = []
 
     for generation in range(num_generations):
-        # Evaluate every chromosome: fitness = makespan.
+        # Evaluate every chromosome: decode_function returns (schedule, makespan),
+        # and only the makespan is used as the fitness value.
         fitness_values = []
         for chromosome in population:
-            fitness_values.append(decode_function(chromosome, instance))
+            schedule, makespan = decode_function(chromosome, instance)
+            fitness_values.append(makespan)
 
         # Statistics for this generation.
         generation_best_index = 0
@@ -216,15 +222,15 @@ def run_ga(instance, decode_function, population_size, num_generations,
             total = total + fitness_values[i]
 
         generation_best = fitness_values[generation_best_index]
-        best_history.append(generation_best)
-        worst_history.append(generation_worst)
-        average_history.append(total / len(fitness_values))
+        best_per_generation.append(generation_best)
+        worst_per_generation.append(generation_worst)
+        average_per_generation.append(total / len(fitness_values))
 
         # Update the best solution found so far (strictly lower = improvement).
         if best_fitness is None or generation_best < best_fitness:
             best_fitness = generation_best
             best_chromosome = list(population[generation_best_index])
-            best_generation = generation
+            convergence_generation = generation
             generations_without_improvement = 0
         else:
             generations_without_improvement = generations_without_improvement + 1
@@ -260,25 +266,34 @@ def run_ga(instance, decode_function, population_size, num_generations,
     result = {}
     result["best_chromosome"] = best_chromosome
     result["best_makespan"] = best_fitness
-    result["best_generation"] = best_generation
-    result["best_history"] = best_history
-    result["worst_history"] = worst_history
-    result["average_history"] = average_history
+    result["convergence_generation"] = convergence_generation
+    result["best_per_generation"] = best_per_generation
+    result["worst_per_generation"] = worst_per_generation
+    result["average_per_generation"] = average_per_generation
     return result
 
 
 if __name__ == "__main__":
-    # Tiny made-up instance: each job is a list of (machine, processing_time).
+    # Tiny made-up instance, in the same dictionary shape decoder.py's
+    # parse_instance() produces: instance["jobs"][job] = list of
+    # (machine, processing_time) pairs.
     # Job 0 has 3 operations, job 1 has 2, job 2 has 3.
-    test_instance = [
-        [(0, 3), (1, 2), (2, 2)],
-        [(0, 2), (2, 1)],
-        [(1, 4), (2, 3), (0, 1)],
-    ]
+    test_instance = {
+        "num_jobs": 3,
+        "num_machines": 3,
+        "jobs": {
+            0: [(0, 3), (1, 2), (2, 2)],
+            1: [(0, 2), (2, 1)],
+            2: [(1, 4), (2, 3), (0, 1)],
+        }
+    }
 
-    # Fake decoder: ignores the chromosome and returns a random makespan.
+    # Fake decoder: ignores the chromosome and returns a random (schedule, makespan)
+    # tuple, matching decoder.py's real decode() return shape.
     def fake_decode_function(chromosome, instance):
-        return random.randint(10, 50)
+        fake_schedule = []
+        fake_makespan = random.randint(10, 50)
+        return fake_schedule, fake_makespan
 
     result = run_ga(test_instance, fake_decode_function,
                     population_size=20, num_generations=100,
@@ -286,5 +301,5 @@ if __name__ == "__main__":
 
     print("Best chromosome:", result["best_chromosome"])
     print("Best makespan found:", result["best_makespan"])
-    print("Best makespan last improved in generation:", result["best_generation"])
-    print("Generations run:", len(result["best_history"]))
+    print("Best makespan last improved in generation:", result["convergence_generation"])
+    print("Generations run:", len(result["best_per_generation"]))

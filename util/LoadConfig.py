@@ -27,6 +27,12 @@ INSTANCE_CATEGORIES = config["dataset"]["categories"]
 # (e.g. "semi_active" or "active").
 DECODER_STRATEGY = config["decoder"]["strategy"]
 
+# --- GA settings -------------------------------------------------------------
+# Number of chromosomes that compete in each tournament inside
+# ga_core.py's tournament_selection(). Stays fixed across all three
+# parameter sets used in the experiments.
+TOURNAMENT_SIZE = config["ga"]["tournament_size"]
+
 # --- Results/output settings ------------------------------------------------
 # Folder where generated files (Gantt charts, CSVs, plots) get saved.
 RESULTS_DIR = config["results"]["results_dir"]
