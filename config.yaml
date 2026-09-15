@@ -22,17 +22,44 @@ dataset:
 decoder:
   strategy: "semi_active"
 
-# GA settings — fixed GA constants that stay the same across all three
-# parameter sets (population size, generations, crossover rate, mutation
-# rate, patience are the three parameter SETS defined separately in
-# experiments.py, since those are what we're comparing).
+# GA settings.
+#   tournament_size: fixed constant used every run, by ga_core.py.
+#   number_of_runs: how many independent runs each (instance, parameter set)
+#     combination gets in experiments.py (assignment requires 10-30).
+#   parameter_sets: the THREE parameter settings the assignment asks us to
+#     compare against each other. Values marked TODO still need to be
+#     agreed on as a group before the real experiment sweep — the numbers
+#     below are just placeholders so the code runs end to end.
 ga:
   tournament_size: 3
+  number_of_runs: 20  # TODO: pick a value between 10 and 30
+  parameter_sets:
+    - name: "Set 1 (baseline)"
+      population_size: 50    # TODO
+      num_generations: 150   # TODO
+      crossover_rate: 0.9    # TODO
+      mutation_rate: 0.2     # TODO
+      patience: 30           # TODO
+    - name: "Set 2 (larger population)"
+      population_size: 100   # TODO
+      num_generations: 150   # TODO
+      crossover_rate: 0.7    # TODO
+      mutation_rate: 0.4     # TODO
+      patience: 30           # TODO
+    - name: "Set 3 (more generations)"
+      population_size: 30    # TODO
+      num_generations: 250   # TODO
+      crossover_rate: 0.95   # TODO
+      mutation_rate: 0.1     # TODO
+      patience: 30           # TODO
 
-# Output settings — where generated files (Gantt charts, example schedule
-# output) get saved, and what image format to use.
+# Output settings — where generated files (Gantt charts, CSVs, plots) get
+# saved, and what image format to use.
 results:
   results_dir: "results"
   image_format: "png"
   example_gantt_filename: "example_gantt.png"
   example_instance_gantt_filename: "example_la01_gantt.png"
+  experiment_results_csv: "experiment_results.csv"
+  example_convergence_comparison_filename: "example_convergence_comparison.png"
+  example_category_comparison_filename: "example_category_comparison.png"

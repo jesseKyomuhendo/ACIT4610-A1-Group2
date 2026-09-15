@@ -33,6 +33,15 @@ DECODER_STRATEGY = config["decoder"]["strategy"]
 # parameter sets used in the experiments.
 TOURNAMENT_SIZE = config["ga"]["tournament_size"]
 
+# How many independent runs each (instance, parameter set) combination
+# gets in experiments.py (the assignment requires 10-30).
+NUMBER_OF_RUNS = config["ga"]["number_of_runs"]
+
+# The three GA parameter settings we compare against each other. Each is a
+# dictionary with keys: name, population_size, num_generations,
+# crossover_rate, mutation_rate, patience.
+PARAMETER_SETS = config["ga"]["parameter_sets"]
+
 # --- Results/output settings ------------------------------------------------
 # Folder where generated files (Gantt charts, CSVs, plots) get saved.
 RESULTS_DIR = config["results"]["results_dir"]
@@ -43,3 +52,8 @@ IMAGE_FORMAT = config["results"]["image_format"]
 # Filenames for the example Gantt charts produced by decoder.py's demo.
 EXAMPLE_GANTT_FILENAME = config["results"]["example_gantt_filename"]
 EXAMPLE_INSTANCE_GANTT_FILENAME = config["results"]["example_instance_gantt_filename"]
+
+# Filenames used by experiments.py.
+EXPERIMENT_RESULTS_CSV = config["results"]["experiment_results_csv"]
+EXAMPLE_CONVERGENCE_COMPARISON_FILENAME = config["results"]["example_convergence_comparison_filename"]
+EXAMPLE_CATEGORY_COMPARISON_FILENAME = config["results"]["example_category_comparison_filename"]
