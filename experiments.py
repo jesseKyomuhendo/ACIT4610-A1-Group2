@@ -105,6 +105,7 @@ def run_one_combination(instance, parameter_setting, number_of_runs, progress_la
         "average_makespan": average_makespan,
         "std_dev_makespan": std_dev_makespan,
         "average_execution_time": average_execution_time,
+        "total_execution_time": total_time,
         "average_convergence_generation": average_convergence_generation,
         "best_per_generation_first_run": first_run_best_per_generation
     }
@@ -154,6 +155,7 @@ def run_experiment(instance_files_by_category, parameter_settings, number_of_run
                     "average_makespan": combination_result["average_makespan"],
                     "std_dev_makespan": combination_result["std_dev_makespan"],
                     "average_execution_time": combination_result["average_execution_time"],
+                    "total_execution_time": combination_result["total_execution_time"],
                     "average_convergence_generation": combination_result["average_convergence_generation"],
                     "best_per_generation_first_run": combination_result["best_per_generation_first_run"]
                 }
@@ -187,6 +189,7 @@ def save_results_to_csv(results, filepath):
         "average_makespan",
         "std_dev_makespan",
         "average_execution_time",
+        "total_execution_time",
         "average_convergence_generation"
     ]
 
@@ -223,7 +226,7 @@ def print_results_table(results):
     """
     print(
         "Category   | Instance     | Parameter Set              | "
-        "Best  | Worst  | Avg     | StdDev | AvgTime(s) | AvgConvGen"
+        "Best  | Worst  | Avg     | StdDev | AvgTime(s) | TotalTime(s) | AvgConvGen"
     )
     for row in results:
         print(
@@ -235,6 +238,7 @@ def print_results_table(results):
             round(row["average_makespan"], 2), "|",
             round(row["std_dev_makespan"], 2), "|",
             round(row["average_execution_time"], 3), "|",
+            round(row["total_execution_time"], 3), "|",
             round(row["average_convergence_generation"], 1)
         )
 
@@ -336,71 +340,65 @@ if __name__ == "__main__":
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
-    # --- Quick pipeline check: one small instance, all three parameter -------
-    # sets, only 3 runs each (not the full 10-30) so this finishes fast and
-    # just proves the whole chain works before running the real sweep.
-    demo_instance_filename = INSTANCE_CATEGORIES["small"][0]
-    demo_instance_path = os.path.join(DATA_DIR, demo_instance_filename)
-    demo_instance = parse_instance(demo_instance_path)
+    # --- Quick pipeline check (COMMENTED OUT -- this was only needed once,
+    # to verify decoder.py + ga_core.py work together, before running the
+    # full sweep below every single time). Uncomment this whole block again
+    # if you want to re-run the quick sanity check.
+    #
+    # demo_instance_filename = INSTANCE_CATEGORIES["small"][0]
+    # demo_instance_path = os.path.join(DATA_DIR, demo_instance_filename)
+    # demo_instance = parse_instance(demo_instance_path)
+    #
+    # demo_number_of_runs = 3
+    # demo_curves = []
+    # demo_labels = []
+    #
+    # print("=== Quick pipeline check (demo) ===")
+    #
+    # parameter_index = 0
+    # while parameter_index < len(PARAMETER_SETS):
+    #     parameter_setting = PARAMETER_SETS[parameter_index]
+    #     progress_label = demo_instance_filename + " [demo], parameter set " + parameter_setting["name"]
+    #
+    #     combination_result = run_one_combination(
+    #         demo_instance, parameter_setting, demo_number_of_runs, progress_label
+    #     )
+    #
+    #     print(
+    #         parameter_setting["name"],
+    #         "- best:", combination_result["best_makespan"],
+    #         "worst:", combination_result["worst_makespan"],
+    #         "avg:", round(combination_result["average_makespan"], 2)
+    #     )
+    #
+    #     demo_curves.append(combination_result["best_per_generation_first_run"])
+    #     demo_labels.append(parameter_setting["name"])
+    #
+    #     parameter_index = parameter_index + 1
+    #
+    # convergence_comparison_path = os.path.join(RESULTS_DIR, EXAMPLE_CONVERGENCE_COMPARISON_FILENAME)
+    # plot_convergence_comparison(
+    #     demo_curves,
+    #     demo_labels,
+    #     "Convergence comparison across parameter sets (demo)",
+    #     save_path=convergence_comparison_path
+    # )
+    # print("Saved:", convergence_comparison_path)
+    #
+    # category_comparison_path = os.path.join(RESULTS_DIR, EXAMPLE_CATEGORY_COMPARISON_FILENAME)
+    # plot_category_comparison(
+    #     ["small", "medium", "large"],
+    #     [700, 1200, 2500],
+    #     "Average makespan",
+    #     "Average makespan by category (example numbers)",
+    #     save_path=category_comparison_path
+    # )
+    # print("Saved:", category_comparison_path)
 
-    demo_number_of_runs = 3
-    demo_curves = []
-    demo_labels = []
-
-    print("=== Quick pipeline check (demo) ===")
-
-    parameter_index = 0
-    while parameter_index < len(PARAMETER_SETS):
-        parameter_setting = PARAMETER_SETS[parameter_index]
-        progress_label = demo_instance_filename + " [demo], parameter set " + parameter_setting["name"]
-
-        combination_result = run_one_combination(
-            demo_instance, parameter_setting, demo_number_of_runs, progress_label
-        )
-
-        print(
-            parameter_setting["name"],
-            "- best:", combination_result["best_makespan"],
-            "worst:", combination_result["worst_makespan"],
-            "avg:", round(combination_result["average_makespan"], 2)
-        )
-
-        demo_curves.append(combination_result["best_per_generation_first_run"])
-        demo_labels.append(parameter_setting["name"])
-
-        parameter_index = parameter_index + 1
-
-    convergence_comparison_path = os.path.join(RESULTS_DIR, EXAMPLE_CONVERGENCE_COMPARISON_FILENAME)
-    plot_convergence_comparison(
-        demo_curves,
-        demo_labels,
-        "Convergence comparison across parameter sets (demo)",
-        save_path=convergence_comparison_path
-    )
-    print("Saved:", convergence_comparison_path)
-
-    # --- Confirm plot_category_comparison saves correctly, using made-up -----
-    # example numbers (this is just to check the function works, not real
-    # results).
-    category_comparison_path = os.path.join(RESULTS_DIR, EXAMPLE_CATEGORY_COMPARISON_FILENAME)
-    plot_category_comparison(
-        ["small", "medium", "large"],
-        [700, 1200, 2500],
-        "Average makespan",
-        "Average makespan by category (example numbers)",
-        save_path=category_comparison_path
-    )
-    print("Saved:", category_comparison_path)
-
-    """
-    --- The full experiment sweep ---------------------------------------
-    This runs every instance x every parameter set x NUMBER_OF_RUNS
-    independent runs, and can take a long time depending on the values
-    chosen in config.yaml. Left commented out so this file can be tested
-    quickly (just the demo above) without accidentally starting a long run.
-    """
-
-
+    # --- The full experiment sweep -------------------------------------------
+    # This runs every instance x every parameter set x NUMBER_OF_RUNS
+    # independent runs, and can take a few minutes depending on the values
+    # chosen in config.yaml.
     results = run_experiment(INSTANCE_CATEGORIES, PARAMETER_SETS, NUMBER_OF_RUNS)
     csv_path = os.path.join(RESULTS_DIR, EXPERIMENT_RESULTS_CSV)
     save_results_to_csv(results, csv_path)
