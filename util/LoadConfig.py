@@ -55,5 +55,5 @@ EXAMPLE_INSTANCE_GANTT_FILENAME = config["results"]["example_instance_gantt_file
 
 # Filenames used by experiments.py.
 EXPERIMENT_RESULTS_CSV = config["results"]["experiment_results_csv"]
-EXAMPLE_CONVERGENCE_COMPARISON_FILENAME = config["results"]["example_convergence_comparison_filename"]
-EXAMPLE_CATEGORY_COMPARISON_FILENAME = config["results"]["example_category_comparison_filename"]
+CONVERGENCE_COMPARISON_FILENAME = config["results"]["convergence_comparison_filename"]
+CATEGORY_COMPARISON_FILENAME = config["results"]["category_comparison_filename"]

@@ -22,8 +22,8 @@ from util.LoadConfig import (
     NUMBER_OF_RUNS,
     PARAMETER_SETS,
     EXPERIMENT_RESULTS_CSV,
-    EXAMPLE_CONVERGENCE_COMPARISON_FILENAME,
-    EXAMPLE_CATEGORY_COMPARISON_FILENAME
+    CONVERGENCE_COMPARISON_FILENAME,
+    CATEGORY_COMPARISON_FILENAME
 )
 
 from decoder import parse_instance, decode
@@ -243,6 +243,57 @@ def print_results_table(results):
         )
 
 
+def get_convergence_curves_for_instance(results, instance_filename):
+    """
+    Pulls out the best-per-generation curve and the parameter set name for
+    every row in `results` that belongs to the given instance file. Used to
+    build a convergence comparison chart (one curve per parameter set) for
+    ONE specific instance, from the real experiment results.
+
+    Returns (list_of_curves, list_of_labels).
+    """
+    curves = []
+    labels = []
+
+    for row in results:
+        if row["instance"] == instance_filename:
+            curves.append(row["best_per_generation_first_run"])
+            labels.append(row["parameter_set"])
+
+    return curves, labels
+
+
+def get_average_makespan_by_category(results, parameter_set_name):
+    """
+    For ONE parameter set (so the comparison is fair -- not mixing
+    different parameter settings together), computes the average makespan
+    for each category ("small", "medium", "large") by averaging over the
+    two instances in that category. Used to build the category comparison
+    bar chart from the real experiment results.
+
+    Returns (list_of_categories, list_of_average_makespans).
+    """
+    totals_by_category = {}
+    counts_by_category = {}
+
+    for row in results:
+        if row["parameter_set"] == parameter_set_name:
+            category = row["category"]
+            if category not in totals_by_category:
+                totals_by_category[category] = 0
+                counts_by_category[category] = 0
+            totals_by_category[category] = totals_by_category[category] + row["average_makespan"]
+            counts_by_category[category] = counts_by_category[category] + 1
+
+    categories = []
+    averages = []
+    for category in totals_by_category:
+        categories.append(category)
+        averages.append(totals_by_category[category] / counts_by_category[category])
+
+    return categories, averages
+
+
 # ---------------------------------------------------------------------------
 # 4. Plotting functions — all save an image file in addition to showing it
 # ---------------------------------------------------------------------------
@@ -376,24 +427,24 @@ if __name__ == "__main__":
     #
     #     parameter_index = parameter_index + 1
     #
-    # convergence_comparison_path = os.path.join(RESULTS_DIR, EXAMPLE_CONVERGENCE_COMPARISON_FILENAME)
+    # demo_convergence_path = os.path.join(RESULTS_DIR, CONVERGENCE_COMPARISON_FILENAME)
     # plot_convergence_comparison(
     #     demo_curves,
     #     demo_labels,
     #     "Convergence comparison across parameter sets (demo)",
-    #     save_path=convergence_comparison_path
+    #     save_path=demo_convergence_path
     # )
-    # print("Saved:", convergence_comparison_path)
+    # print("Saved:", demo_convergence_path)
     #
-    # category_comparison_path = os.path.join(RESULTS_DIR, EXAMPLE_CATEGORY_COMPARISON_FILENAME)
+    # demo_category_path = os.path.join(RESULTS_DIR, CATEGORY_COMPARISON_FILENAME)
     # plot_category_comparison(
     #     ["small", "medium", "large"],
     #     [700, 1200, 2500],
     #     "Average makespan",
     #     "Average makespan by category (example numbers)",
-    #     save_path=category_comparison_path
+    #     save_path=demo_category_path
     # )
-    # print("Saved:", category_comparison_path)
+    # print("Saved:", demo_category_path)
 
     # --- The full experiment sweep -------------------------------------------
     # This runs every instance x every parameter set x NUMBER_OF_RUNS
@@ -404,3 +455,37 @@ if __name__ == "__main__":
     save_results_to_csv(results, csv_path)
     print_results_table(results)
     print("Saved:", csv_path)
+
+    # --- Convergence comparison chart, from REAL results ---------------------
+    # Picks one representative instance (the first large instance, since
+    # that is where the three parameter sets showed the clearest difference
+    # in our own test run) and plots all three parameter sets' convergence
+    # curves on it, for report point #8 (early vs. late-stage effects).
+    representative_instance = INSTANCE_CATEGORIES["large"][0]
+    curves, labels = get_convergence_curves_for_instance(results, representative_instance)
+
+    convergence_comparison_path = os.path.join(RESULTS_DIR, CONVERGENCE_COMPARISON_FILENAME)
+    plot_convergence_comparison(
+        curves,
+        labels,
+        "Convergence comparison across parameter sets (" + representative_instance + ")",
+        save_path=convergence_comparison_path
+    )
+    print("Saved:", convergence_comparison_path)
+
+    # --- Category comparison chart, from REAL results -------------------------
+    # Uses only the baseline parameter set (Set 1) so the comparison is a
+    # fair one: the only thing changing across the bars is problem size, not
+    # also the GA parameters. Used for report point #5.
+    baseline_parameter_set_name = PARAMETER_SETS[0]["name"]
+    categories, averages = get_average_makespan_by_category(results, baseline_parameter_set_name)
+
+    category_comparison_path = os.path.join(RESULTS_DIR, CATEGORY_COMPARISON_FILENAME)
+    plot_category_comparison(
+        categories,
+        averages,
+        "Average makespan",
+        "Average makespan by category (" + baseline_parameter_set_name + ")",
+        save_path=category_comparison_path
+    )
+    print("Saved:", category_comparison_path)

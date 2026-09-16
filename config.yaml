@@ -80,5 +80,5 @@ results:
   example_gantt_filename: "example_gantt.png"
   example_instance_gantt_filename: "example_la01_gantt.png"
   experiment_results_csv: "experiment_results.csv"
-  example_convergence_comparison_filename: "example_convergence_comparison.png"
-  example_category_comparison_filename: "example_category_comparison.png"
+  convergence_comparison_filename: "convergence_comparison.png"
+  category_comparison_filename: "category_comparison.png"
