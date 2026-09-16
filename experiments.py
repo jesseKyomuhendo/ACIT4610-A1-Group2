@@ -391,60 +391,62 @@ if __name__ == "__main__":
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
-    # --- Quick pipeline check (COMMENTED OUT -- this was only needed once,
-    # to verify decoder.py + ga_core.py work together, before running the
-    # full sweep below every single time). Uncomment this whole block again
-    # if you want to re-run the quick sanity check.
-    #
-    # demo_instance_filename = INSTANCE_CATEGORIES["small"][0]
-    # demo_instance_path = os.path.join(DATA_DIR, demo_instance_filename)
-    # demo_instance = parse_instance(demo_instance_path)
-    #
-    # demo_number_of_runs = 3
-    # demo_curves = []
-    # demo_labels = []
-    #
-    # print("=== Quick pipeline check (demo) ===")
-    #
-    # parameter_index = 0
-    # while parameter_index < len(PARAMETER_SETS):
-    #     parameter_setting = PARAMETER_SETS[parameter_index]
-    #     progress_label = demo_instance_filename + " [demo], parameter set " + parameter_setting["name"]
-    #
-    #     combination_result = run_one_combination(
-    #         demo_instance, parameter_setting, demo_number_of_runs, progress_label
-    #     )
-    #
-    #     print(
-    #         parameter_setting["name"],
-    #         "- best:", combination_result["best_makespan"],
-    #         "worst:", combination_result["worst_makespan"],
-    #         "avg:", round(combination_result["average_makespan"], 2)
-    #     )
-    #
-    #     demo_curves.append(combination_result["best_per_generation_first_run"])
-    #     demo_labels.append(parameter_setting["name"])
-    #
-    #     parameter_index = parameter_index + 1
-    #
-    # demo_convergence_path = os.path.join(RESULTS_DIR, CONVERGENCE_COMPARISON_FILENAME)
-    # plot_convergence_comparison(
-    #     demo_curves,
-    #     demo_labels,
-    #     "Convergence comparison across parameter sets (demo)",
-    #     save_path=demo_convergence_path
-    # )
-    # print("Saved:", demo_convergence_path)
-    #
-    # demo_category_path = os.path.join(RESULTS_DIR, CATEGORY_COMPARISON_FILENAME)
-    # plot_category_comparison(
-    #     ["small", "medium", "large"],
-    #     [700, 1200, 2500],
-    #     "Average makespan",
-    #     "Average makespan by category (example numbers)",
-    #     save_path=demo_category_path
-    # )
-    # print("Saved:", demo_category_path)
+    """
+    --- Quick pipeline check (COMMENTED OUT -- this was only needed once,
+    to verify decoder.py + ga_core.py work together, before running the
+    full sweep below every single time). Delete the two triple-quote lines
+    around this block if you want to re-run the quick sanity check.
+
+    demo_instance_filename = INSTANCE_CATEGORIES["small"][0]
+    demo_instance_path = os.path.join(DATA_DIR, demo_instance_filename)
+    demo_instance = parse_instance(demo_instance_path)
+
+    demo_number_of_runs = 3
+    demo_curves = []
+    demo_labels = []
+
+    print("=== Quick pipeline check (demo) ===")
+
+    parameter_index = 0
+    while parameter_index < len(PARAMETER_SETS):
+        parameter_setting = PARAMETER_SETS[parameter_index]
+        progress_label = demo_instance_filename + " [demo], parameter set " + parameter_setting["name"]
+
+        combination_result = run_one_combination(
+            demo_instance, parameter_setting, demo_number_of_runs, progress_label
+        )
+
+        print(
+            parameter_setting["name"],
+            "- best:", combination_result["best_makespan"],
+            "worst:", combination_result["worst_makespan"],
+            "avg:", round(combination_result["average_makespan"], 2)
+        )
+
+        demo_curves.append(combination_result["best_per_generation_first_run"])
+        demo_labels.append(parameter_setting["name"])
+
+        parameter_index = parameter_index + 1
+
+    demo_convergence_path = os.path.join(RESULTS_DIR, CONVERGENCE_COMPARISON_FILENAME)
+    plot_convergence_comparison(
+        demo_curves,
+        demo_labels,
+        "Convergence comparison across parameter sets (demo)",
+        save_path=demo_convergence_path
+    )
+    print("Saved:", demo_convergence_path)
+
+    demo_category_path = os.path.join(RESULTS_DIR, CATEGORY_COMPARISON_FILENAME)
+    plot_category_comparison(
+        ["small", "medium", "large"],
+        [700, 1200, 2500],
+        "Average makespan",
+        "Average makespan by category (example numbers)",
+        save_path=demo_category_path
+    )
+    print("Saved:", demo_category_path)
+    """
 
     # --- The full experiment sweep -------------------------------------------
     # This runs every instance x every parameter set x NUMBER_OF_RUNS
