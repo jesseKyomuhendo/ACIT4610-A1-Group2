@@ -392,14 +392,17 @@ if __name__ == "__main__":
     )
     print("Saved:", category_comparison_path)
 
-    # --- The full experiment sweep ---------------------------------------
-    # This runs every instance x every parameter set x NUMBER_OF_RUNS
-    # independent runs, and can take a long time depending on the values
-    # chosen in config.yaml. Left commented out so this file can be tested
-    # quickly (just the demo above) without accidentally starting a long run.
-    #
-    # results = run_experiment(INSTANCE_CATEGORIES, PARAMETER_SETS, NUMBER_OF_RUNS)
-    # csv_path = os.path.join(RESULTS_DIR, EXPERIMENT_RESULTS_CSV)
-    # save_results_to_csv(results, csv_path)
-    # print_results_table(results)
-    # print("Saved:", csv_path)
+    """
+    --- The full experiment sweep ---------------------------------------
+    This runs every instance x every parameter set x NUMBER_OF_RUNS
+    independent runs, and can take a long time depending on the values
+    chosen in config.yaml. Left commented out so this file can be tested
+    quickly (just the demo above) without accidentally starting a long run.
+    """
+
+
+    results = run_experiment(INSTANCE_CATEGORIES, PARAMETER_SETS, NUMBER_OF_RUNS)
+    csv_path = os.path.join(RESULTS_DIR, EXPERIMENT_RESULTS_CSV)
+    save_results_to_csv(results, csv_path)
+    print_results_table(results)
+    print("Saved:", csv_path)

@@ -26,32 +26,51 @@ decoder:
 #   tournament_size: fixed constant used every run, by ga_core.py.
 #   number_of_runs: how many independent runs each (instance, parameter set)
 #     combination gets in experiments.py (assignment requires 10-30).
-#   parameter_sets: the THREE parameter settings the assignment asks us to
-#     compare against each other. Values marked TODO still need to be
-#     agreed on as a group before the real experiment sweep — the numbers
-#     below are just placeholders so the code runs end to end.
+#   parameter_sets: the THREE parameter settings we compare against each
+#     other. Each represents a different exploration/exploitation strategy
+#     (see comments below), so the report has a genuine trade-off to
+#     analyze rather than three arbitrary variations.
 ga:
   tournament_size: 3
-  number_of_runs: 20  # TODO: pick a value between 10 and 30
+  number_of_runs: 20
+
   parameter_sets:
+    # Set 1: BASELINE. Moderate population, fairly high crossover (the
+    # main search operator), low mutation (small random disturbances).
+    # This is the standard starting point most GA literature recommends.
     - name: "Set 1 (baseline)"
-      population_size: 50    # TODO
-      num_generations: 150   # TODO
-      crossover_rate: 0.9    # TODO
-      mutation_rate: 0.2     # TODO
-      patience: 30           # TODO
-    - name: "Set 2 (larger population)"
-      population_size: 100   # TODO
-      num_generations: 150   # TODO
-      crossover_rate: 0.7    # TODO
-      mutation_rate: 0.4     # TODO
-      patience: 30           # TODO
-    - name: "Set 3 (more generations)"
-      population_size: 30    # TODO
-      num_generations: 250   # TODO
-      crossover_rate: 0.95   # TODO
-      mutation_rate: 0.1     # TODO
-      patience: 30           # TODO
+      population_size: 50
+      num_generations: 200
+      crossover_rate: 0.8
+      mutation_rate: 0.1
+      patience: 40
+
+    # Set 2: EXPLORATION-heavy. Bigger population and higher mutation rate
+    # increase genetic diversity, which should help avoid getting stuck in
+    # a local optimum -- at the cost of roughly double the fitness
+    # evaluations per run (100 x 200 = 20,000 vs. Set 1's 50 x 200 =
+    # 10,000), so it is also the most computationally expensive setting.
+    - name: "Set 2 (exploration-heavy)"
+      population_size: 100
+      num_generations: 200
+      crossover_rate: 0.7
+      mutation_rate: 0.3
+      patience: 40
+
+    # Set 3: EXPLOITATION-heavy. A small population converges faster per
+    # generation, and a very high crossover rate with low mutation pushes
+    # the search to aggressively recombine the current best solutions
+    # rather than explore randomly. More generations (300) are given to
+    # compensate for the smaller population, keeping the total evaluation
+    # budget close to Set 1's (30 x 300 = 9,000). The risk this setting is
+    # meant to test is premature convergence -- getting stuck on a decent
+    # but not great schedule early on.
+    - name: "Set 3 (exploitation-heavy)"
+      population_size: 30
+      num_generations: 300
+      crossover_rate: 0.95
+      mutation_rate: 0.05
+      patience: 40
 
 # Output settings — where generated files (Gantt charts, CSVs, plots) get
 # saved, and what image format to use.
