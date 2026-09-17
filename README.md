@@ -1,4 +1,4 @@
-# ACIT 4610: Job Shop Scheduling Problem Using Genetic Algorithms
+# ACIT4610: Job Shop Scheduling Problem Using Genetic Algorithms
 
 Group 2
 Course: ACIT4610
