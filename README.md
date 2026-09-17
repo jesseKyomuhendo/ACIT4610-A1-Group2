@@ -80,12 +80,17 @@ Both `decoder.py` and `experiments.py` write their output into the `results` fol
 
 `experiments.py` runs the full experiment sweep by default, testing every benchmark instance with every parameter set for `NUMBER_OF_RUNS` independent runs each:
 
+**On Windows:**
+```bash
+python experiments.py
+```
+
+**On macOS/Linux:**
 ```bash
 python3 experiments.py
 ```
 
 This produces `experiment_results.csv` and the convergence and category comparison plots, and can take a few minutes depending on the values set in `config.yaml`. A faster, 3-run pipeline check also exists in the file but is disabled by default, wrapped in triple quotes to prevent it from running.
-
 
 ## Authors
 
