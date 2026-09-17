@@ -86,15 +86,6 @@ python3 experiments.py
 
 This produces `experiment_results.csv` and the convergence and category comparison plots, and can take a few minutes depending on the values set in `config.yaml`. A faster, 3-run pipeline check also exists in the file but is disabled by default, wrapped in triple quotes to prevent it from running.
 
-## Libraries Used
-
-- **random**: Chromosome initialization and genetic operators
-- **math**: Statistical calculations (standard deviation)
-- **matplotlib.pyplot**: Gantt charts and convergence plots
-- **numpy**: Not directly used, available for future enhancements
-- **yaml**: Configuration file parsing
-- **os**: File and directory operations
-- **time**: Execution time measurement
 
 ## Authors
 
