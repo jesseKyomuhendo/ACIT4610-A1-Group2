@@ -19,7 +19,7 @@ def parse_instance(filepath):
     Reads a JSPLib-format job shop instance file and returns a dictionary
     describing the jobs, machines, and processing times.
 
-    File format (see https://scheduleopt.github.io/benchmarks/jsplib/):
+    File format (see data/ folder):
         line 1:  number_of_jobs number_of_machines
         line 2+: one line per job, listing pairs of
                  (machine_number, processing_time), in the order that job
@@ -88,9 +88,8 @@ def decode(chromosome, instance):
 
     "Semi-active" means: every operation starts as early as the two rules
     below allow, but operations are always placed one after another in the
-    order given by the chromosome — never squeezed into an earlier gap on a
-    machine (that would be the "active" strategy instead, which is more
-    complex to implement).
+    order given by the chromosome, never squeezed into an earlier gap on a
+    machine (that would be the "active" strategy instead).
 
     Two rules every operation must respect:
       1. Precedence: an operation cannot start before the previous
@@ -103,8 +102,7 @@ def decode(chromosome, instance):
         schedule: a list of dictionaries, one per operation, each with keys
                   "job", "op_index", "machine", "start", "end"
         makespan: a single number, the time the last operation finishes
-                  (this is also the fitness value the GA tries to minimize
-                  — lower makespan means a better, shorter schedule)
+                  (this is also the fitness value the GA tries to minimize, lower makespan means a better, shorter schedule)
     """
     num_machines = instance["num_machines"]
     jobs = instance["jobs"]
@@ -266,7 +264,7 @@ def plot_gantt(schedule, title, save_path=None):
 # ---------------------------------------------------------------------------
 # 4. A small helper used only by the demo below: build ONE random valid
 #    chromosome for a given instance. (The real GA population/selection/
-#    crossover/mutation code lives in a teammate's ga_core.py — this is
+#    crossover/mutation code lives in a teammate's ga_core.py, this is
 #    just enough to test decode() and plot_gantt() on their own.)
 # ---------------------------------------------------------------------------
 

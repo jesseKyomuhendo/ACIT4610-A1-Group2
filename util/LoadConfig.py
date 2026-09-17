@@ -34,7 +34,7 @@ DECODER_STRATEGY = config["decoder"]["strategy"]
 TOURNAMENT_SIZE = config["ga"]["tournament_size"]
 
 # How many independent runs each (instance, parameter set) combination
-# gets in experiments.py (the assignment requires 10-30).
+# gets in experiments.py
 NUMBER_OF_RUNS = config["ga"]["number_of_runs"]
 
 # The three GA parameter settings we compare against each other. Each is a

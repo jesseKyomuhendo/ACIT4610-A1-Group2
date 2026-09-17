@@ -2,7 +2,7 @@
 test:
   test: "Config.yaml loaded successfully"
 
-# Dataset settings — used by decoder.py to find and load the JSPLib
+# Dataset settings: used by decoder.py to find and load the JSPLib
 # benchmark instance files, grouped by problem size category.
 dataset:
   data_dir: "data"
@@ -17,7 +17,7 @@ dataset:
       - "la31.txt"
       - "la33.txt"
 
-# Decoder settings — which Schedule Building Algorithm strategy the
+# Decoder settings: which Schedule Building Algorithm strategy the
 # decode() function uses to turn a chromosome into a feasible schedule.
 decoder:
   strategy: "semi_active"
@@ -25,10 +25,10 @@ decoder:
 # GA settings.
 #   tournament_size: fixed constant used every run, by ga_core.py.
 #   number_of_runs: how many independent runs each (instance, parameter set)
-#     combination gets in experiments.py (assignment requires 10-30).
+#     combination gets in experiments.py
 #   parameter_sets: the THREE parameter settings we compare against each
 #     other. Each represents a different exploration/exploitation strategy
-#     (see comments below), so the report has a genuine trade-off to
+#     , so the report has a genuine trade-off to
 #     analyze rather than three arbitrary variations.
 ga:
   tournament_size: 3
@@ -37,7 +37,6 @@ ga:
   parameter_sets:
     # Set 1: BASELINE. Moderate population, fairly high crossover (the
     # main search operator), low mutation (small random disturbances).
-    # This is the standard starting point most GA literature recommends.
     - name: "Set 1 (baseline)"
       population_size: 50
       num_generations: 200
@@ -47,9 +46,8 @@ ga:
 
     # Set 2: EXPLORATION-heavy. Bigger population and higher mutation rate
     # increase genetic diversity, which should help avoid getting stuck in
-    # a local optimum -- at the cost of roughly double the fitness
-    # evaluations per run (100 x 200 = 20,000 vs. Set 1's 50 x 200 =
-    # 10,000), so it is also the most computationally expensive setting.
+    # a local optimum, at the cost of roughly double the fitness
+
     - name: "Set 2 (exploration-heavy)"
       population_size: 100
       num_generations: 200
@@ -62,8 +60,8 @@ ga:
     # the search to aggressively recombine the current best solutions
     # rather than explore randomly. More generations (300) are given to
     # compensate for the smaller population, keeping the total evaluation
-    # budget close to Set 1's (30 x 300 = 9,000). The risk this setting is
-    # meant to test is premature convergence -- getting stuck on a decent
+    # budget close to Set 1. The risk this setting is
+    # meant to test is premature convergence, getting stuck on a decent
     # but not great schedule early on.
     - name: "Set 3 (exploitation-heavy)"
       population_size: 30
@@ -72,7 +70,7 @@ ga:
       mutation_rate: 0.05
       patience: 40
 
-# Output settings — where generated files (Gantt charts, CSVs, plots) get
+# Output settings: where generated files (Gantt charts, CSVs, plots) get
 # saved, and what image format to use.
 results:
   results_dir: "results"

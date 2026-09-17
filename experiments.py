@@ -5,10 +5,9 @@
 # instance + parameter setting several independent times, and aggregates
 # the results into a table and a few comparison plots.
 #
-# Only random, math, numpy, and matplotlib.pyplot are used for the actual
+# random, math, numpy, and matplotlib.pyplot are used for the actual
 # JSSP/GA logic, plus the standard library's os and time modules for file
-# handling and timing. No pandas, no csv module — the results table is
-# written to a CSV file by hand.
+# handling and timing.
 
 import os
 import time
@@ -168,7 +167,7 @@ def run_experiment(instance_files_by_category, parameter_settings, number_of_run
 
 
 # ---------------------------------------------------------------------------
-# 3. Saving results to a CSV file by hand (no pandas, no csv module)
+# 3. Saving results to a CSV file by hand
 # ---------------------------------------------------------------------------
 
 def save_results_to_csv(results, filepath):
@@ -265,7 +264,7 @@ def get_convergence_curves_for_instance(results, instance_filename):
 
 def get_average_makespan_by_category(results, parameter_set_name):
     """
-    For ONE parameter set (so the comparison is fair -- not mixing
+    For ONE parameter set (so the comparison is fair, not mixing
     different parameter settings together), computes the average makespan
     for each category ("small", "medium", "large") by averaging over the
     two instances in that category. Used to build the category comparison
@@ -325,9 +324,7 @@ def plot_convergence(best_per_generation_list, title, save_path=None):
 def plot_convergence_comparison(list_of_best_per_generation_lists, labels, title, save_path=None):
     """
     Draws several best-fitness-per-generation curves on the SAME chart, one
-    line per parameter setting, with a legend. Useful for report point #8:
-    comparing how different parameter settings behave in the early vs. later
-    stages of the evolutionary cycle.
+    line per parameter setting, with a legend.
     """
     plt.figure(figsize=(8, 5))
 
@@ -360,8 +357,7 @@ def plot_convergence_comparison(list_of_best_per_generation_lists, labels, title
 def plot_category_comparison(categories, values, ylabel, title, save_path=None):
     """
     Draws a simple bar chart, one bar per category (e.g. "small", "medium",
-    "large"). Useful for report points #5 and #6 as a visual alternative to
-    the CSV table.
+    "large").
     """
     x_positions = []
     index = 0
@@ -392,7 +388,7 @@ if __name__ == "__main__":
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
     """
-    --- Quick pipeline check (COMMENTED OUT -- this was only needed once,
+    --- Quick pipeline check (COMMENTED OUT, this was only needed once,
     to verify decoder.py + ga_core.py work together, before running the
     full sweep below every single time). Delete the two triple-quote lines
     around this block if you want to re-run the quick sanity check.
@@ -462,7 +458,7 @@ if __name__ == "__main__":
     # Picks one representative instance (the first large instance, since
     # that is where the three parameter sets showed the clearest difference
     # in our own test run) and plots all three parameter sets' convergence
-    # curves on it, for report point #8 (early vs. late-stage effects).
+    # curves on it.
     representative_instance = INSTANCE_CATEGORIES["large"][0]
     curves, labels = get_convergence_curves_for_instance(results, representative_instance)
 
@@ -478,7 +474,7 @@ if __name__ == "__main__":
     # --- Category comparison chart, from REAL results -------------------------
     # Uses only the baseline parameter set (Set 1) so the comparison is a
     # fair one: the only thing changing across the bars is problem size, not
-    # also the GA parameters. Used for report point #5.
+    # also the GA parameters.
     baseline_parameter_set_name = PARAMETER_SETS[0]["name"]
     categories, averages = get_average_makespan_by_category(results, baseline_parameter_set_name)
 

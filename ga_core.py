@@ -61,8 +61,8 @@ def create_population(instance, population_size):
 
 # Picks tournament_size random chromosomes and returns the one with the lowest (best) makespan.
 #
-# Tournament selection is an ordinal-based selection scheme (Lecture 1,
-# "Selection Scheme"): it only compares which chromosome is better, so it
+# Tournament selection is an ordinal-based selection scheme:
+#  it only compares which chromosome is better, so it
 # works directly with a fitness that must be minimized.
 def tournament_selection(population, fitness_values, tournament_size):
     if tournament_size > len(population):
@@ -81,9 +81,7 @@ def tournament_selection(population, fitness_values, tournament_size):
 
 # Combines two parents into one child with Order Crossover, keeping every job's operation count correct.
 #
-# METHOD: Order Crossover (Lecture 1, "Crossover for Permutations" lists it
-# for order-type problems such as Job Shop Scheduling; the worked example on
-# the "Crossover" slide after the TSP chromosome shows the steps).
+# METHOD: Order Crossover
 #   Step 1: pick two cut points and copy the middle segment from one parent
 #           into the child at the same positions.
 #   Step 2: go through the other parent from left to right and cross out the
@@ -96,15 +94,7 @@ def tournament_selection(population, fitness_values, tournament_size):
 # several times, so we COUNT: a job number from the other parent is only
 # taken while that job still has operations left to place.
 #
-# WHY A PLAIN ONE-POINT CROSSOVER DOES NOT WORK HERE:
-# Jobs 0, 1, 2 each have 2 operations.
-#   parent1 = [0, 1, 2, 0, 2, 1]
-#   parent2 = [2, 2, 1, 0, 1, 0]
-# Cut both after position 3 and join the halves:
-#   child   = [0, 1, 2] + [0, 1, 0] = [0, 1, 2, 0, 1, 0]
-# Job 0 now has 3 operations and job 2 only has 1, so the child is not a
-# valid schedule (the same problem as the duplicate/missing cities on the
-# "How Does the Crossover Operator Work?" slide in Lecture 1).
+
 #
 # TRACE OF THIS ORDER CROSSOVER (same parents, cut points at positions 2 and 3):
 #   1) copy parent1[2..3] = [2, 0]      -> child = [_, _, 2, 0, _, _]
@@ -154,10 +144,6 @@ def crossover(parent1, parent2):
 
 
 # Swaps the genes at two random positions and returns the mutated chromosome.
-#
-# This is the swap / "reciprocal exchange" mutation shown on the "Mutation"
-# slide in Lecture 1 (two genes change places). It never changes how many
-# times a job number appears, so the chromosome always stays valid.
 #
 # TRACE:
 #   chromosome        = [0, 1, 2, 0, 2, 1]
